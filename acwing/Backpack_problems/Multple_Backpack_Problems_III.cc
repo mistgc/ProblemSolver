@@ -1,13 +1,6 @@
-/*============================
-*	File Name: .\Multple_Backpack_Problems_III.cc
-*	Created Date: 1/9/2022 9:11:21 AM
-*	Last Modified Date:1/9/2022 11:20:42 AM
-*	Author: mistgc
-*	Email: georgecai0908@outlook.com
-============================*/
 #include <algorithm>
 #include <iostream>
-#define V 20010
+#include <cstring>
 
 using namespace std;
 
@@ -26,36 +19,37 @@ using namespace std;
  * f[i][j]		(j: 0 -> n)
  * f[j]			(j: n -> 0)
  * */
+const int N = 20010;
 
-int f[V], q[V], g[V];
+int f[N], q[N], g[N];
 int n, m;
 
 int main(){
 	cin >> n >> m;
 
+	//遍历物品
 	for(int i = 0; i < n; i++){
 		int v, w, s;
 		cin >> v >> w >> s;
+		memcpy(g, f, sizeof(f));
+		//遍历余数
 		for(int j = 0; j < v; j++){
-			for(int k = 0; k <= m; k += v){
-
+			int head = 0, tail = -1;
+			//遍历同余系
+			for(int k = j; k <= m; k += v){
+				f[k] = g[k];
+				//将滑动窗口范围以外的值出队
+				if(head <= tail && q[head] < k - v * s) head++;
+				//如果单调队列中有值，则更新dp结果
+				if(head <= tail) f[k] = max(f[k], g[q[head]] + (k - q[head]) / v * w);
+				//当队尾小于要入队值时，将队尾出队
+				while(head <= tail && g[q[tail]] - (q[tail] - j) / v * w <= g[k] - (k - j) / v * w) tail--;
+				q[++tail] = k;
 			}
 		}
 	}
 
+	cout << f[m] << endl;
 
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
